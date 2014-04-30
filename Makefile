@@ -9,10 +9,16 @@ ASM_SOURCES = code.s
 OBJECTS = $(SOURCES:.c=.o) $(ASM_SOURCES:.s=.o)
 TARGET = instream
 
-.PHONY: all clean
-all: $(TARGET)
+.PHONY: all clean reallyclean
+all: distorm3.built $(TARGET)
+distorm3.built:
+	if [ ! -d distorm3 ]; then unzip distorm3.zip; fi
+	$(MAKE) -C distorm3/make/linux
+	touch distorm3.built
 clean:
 	-rm $(TARGET) $(OBJECTS)
+reallyclean: clean
+	-rm -rf distorm3 distorm3.built
 
 $(TARGET): $(OBJECTS)
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
