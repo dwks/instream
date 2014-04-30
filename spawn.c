@@ -10,6 +10,12 @@ pid_t spawn_program(char **argv) {
 
         printf("[%d] Executing target...\n", (int)getpid());
 
+        __asm__ __volatile__ (
+            "pushf\n"
+            "orl    $(1 << 8), 0(%rsp)\n"
+            "popf\n"
+        );
+
         execvp(argv[0], argv);
 	}
 	else {  // parent, set up tracing

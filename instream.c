@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <sys/ptrace.h>  // for ptrace
 #include <sys/wait.h>  // for waitpid
+#include <sys/user.h>  // for user_regs_struct
 #include "spawn.h"
 
 static void loop(pid_t pid);
@@ -23,6 +24,13 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
+static unsigned long current_rip(pid_t pid) {
+    struct user_regs_struct regs;
+    ptrace(PTRACE_GETREGS, pid, 0, &regs);
+
+    return (unsigned long)regs.rip;
+}
+
 static void loop(pid_t pid) {
     for(;;) {
         int status;
@@ -38,12 +46,13 @@ static void loop(pid_t pid) {
         }
         else if(WIFSTOPPED(status)) {
             int sig = WSTOPSIG(status);
-            printf("Target received signal %d\n", sig);
 
             if(sig == SIGTRAP) {
+                printf("[%12lx]\n", current_rip(pid));
                 ptrace(PTRACE_CONT, pid, 0, 0);
             }
             else {
+                printf("Target received signal %d\n", sig);
                 ptrace(PTRACE_CONT, pid, 0, sig);
             }
         }
