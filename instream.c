@@ -3,6 +3,7 @@
 #include <sys/wait.h>  // for waitpid
 #include <sys/user.h>  // for user_regs_struct
 #include "spawn.h"
+#include "inject.h"
 
 static void loop(pid_t pid);
 
@@ -32,6 +33,7 @@ static unsigned long current_rip(pid_t pid) {
 }
 
 static void loop(pid_t pid) {
+    int trap_count = 0;
     for(;;) {
         int status;
         waitpid(pid, &status, 0);
@@ -48,7 +50,17 @@ static void loop(pid_t pid) {
             int sig = WSTOPSIG(status);
 
             if(sig == SIGTRAP) {
-                printf("[%12lx]\n", current_rip(pid));
+                if(trap_count == 0) {
+                    inject_at_entry_point(pid);
+                }
+                else if(trap_count == 1) {
+                    undo_code_injection(pid);
+                }
+                else {
+                    printf("[%12lx]\n", current_rip(pid));
+                }
+
+                trap_count ++;
                 ptrace(PTRACE_CONT, pid, 0, 0);
             }
             else {

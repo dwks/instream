@@ -1,9 +1,11 @@
 # Makefile
 CC = gcc
-CFLAGS = -Wall -Wextra
+CFLAGS = -Wall -Wextra -std=c99
 
-SOURCES = instream.c spawn.c
-OBJECTS = $(SOURCES:.c=.o)
+SOURCES = instream.c spawn.c inject.c
+ASM_SOURCES = code.s
+
+OBJECTS = $(SOURCES:.c=.o) $(ASM_SOURCES:.s=.o)
 TARGET = instream
 
 .PHONY: all clean
