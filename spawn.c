@@ -2,6 +2,7 @@
 #include <unistd.h>  // for fork
 #include <sys/ptrace.h>  // for ptrace
 #include <sys/wait.h>  // for waitpid
+#include <sys/types.h>  // for pid_t
 
 pid_t spawn_program(char **argv) {
     pid_t pid = fork();

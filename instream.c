@@ -4,6 +4,7 @@
 #include <sys/user.h>  // for user_regs_struct
 #include "spawn.h"
 #include "inject.h"
+#include "dump.h"
 
 static void loop(pid_t pid);
 
@@ -56,8 +57,13 @@ static void loop(pid_t pid) {
                 else if(trap_count == 1) {
                     undo_code_injection(pid);
                 }
-                else {
+                
+                if(trap_count > 0) {
+#if 0
                     printf("[%12lx]\n", current_rip(pid));
+#else
+                    disassemble_code_ptrace(current_rip(pid), pid);
+#endif
                 }
 
                 trap_count ++;
