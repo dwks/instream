@@ -21,12 +21,12 @@ pid_t spawn_program(char **argv) {
 #endif
 
         execvp(argv[0], argv);
-	}
-	else {  // parent, set up tracing
+    }
+    else {  // parent, set up tracing
         ptrace(PTRACE_ATTACH, pid, 0, 0);
 
         printf("[%d] Done attaching onto %d\n", (int)getpid(), pid);
-	}
+    }
 
     return pid;
 }
