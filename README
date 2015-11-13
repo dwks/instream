@@ -1,0 +1,5 @@
+A tool which prints the flat-line instruction stream of an executing program.
+It shows the exact sequence of instructions that is executed, like
+single-stepping with a debugger. Uses hardware single-stepping for efficiency.
+
+More information can be found here: http://elfery.net/projects/instream.html
