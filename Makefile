@@ -1,6 +1,6 @@
 # Makefile
 CC = gcc
-CFLAGS = -Wall -Wextra -std=gnu99 -Idistorm3/include -no-pie
+CFLAGS = -Wall -Wextra -std=gnu99 -Idistorm3/include
 LDFLAGS = distorm3/distorm3.a
 
 SOURCES = instream.c spawn.c inject.c dump.c
