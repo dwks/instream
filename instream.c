@@ -1,7 +1,9 @@
 #include <stdio.h>
+#include <signal.h>
 #include <sys/ptrace.h>  // for ptrace
 #include <sys/wait.h>  // for waitpid
 #include <sys/user.h>  // for user_regs_struct
+#include <sys/types.h>
 #include "spawn.h"
 #include "inject.h"
 #include "dump.h"
