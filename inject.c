@@ -31,9 +31,22 @@ void inject_at_entry_point(pid_t pid) {
     if(!addr) die("mmap");
 
     Elf64_Ehdr *header = addr;
-
     entry_point = (unsigned long)header->e_entry;
-    printf("Entry point: %lx\n", entry_point);
+
+    if(header->e_type == ET_DYN) {
+        sprintf(filename, "/proc/%d/maps", (int)pid);
+        int mapsfd = open(filename, O_RDONLY);
+        char line[BUFSIZ];
+        read(mapsfd, line, sizeof(line));
+        close(mapsfd);
+        unsigned long base = strtol(line, NULL, 16);
+
+        printf("PIE entry point: %lx+%lx = %lx\n", base, entry_point, base + entry_point);
+        entry_point += base;
+    }
+    else {
+        printf("non-pie entry point: %lx\n", entry_point);
+    }
     for(int i = 0; i < MAX_CODE_SIZE; i += 8) {
         unsigned long data = ptrace(PTRACE_PEEKTEXT, pid,
             entry_point + i, 0);
